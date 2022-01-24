@@ -1,8 +1,8 @@
-import { Component } from "react";
-import { nanoid } from "nanoid";
-import PropTypes from "prop-types";
+import { Component } from 'react';
+import { nanoid } from 'nanoid';
+import PropTypes from 'prop-types';
 
-import { handleInputChange } from "../../utils";
+import { handleInputChange } from '../../utils';
 import {
   ContactAddForm,
   NameLabel,
@@ -10,17 +10,17 @@ import {
   NumberLabel,
   NamberInput,
   SubmitBtn,
-} from "./ContactForm.styled";
+} from './ContactForm.styled';
 
 export class ContactForm extends Component {
-  state = { name: "", number: "" };
+  state = { name: '', number: '' };
 
   _nameInputId = nanoid();
   _numberInputId = nanoid();
 
   handleSubmitInputChange = handleInputChange.bind(this);
 
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
 
     const { name, number } = this.state;
@@ -31,8 +31,8 @@ export class ContactForm extends Component {
 
   resetForm = () =>
     this.setState({
-      name: "",
-      number: "",
+      name: '',
+      number: '',
     });
 
   render() {
@@ -68,7 +68,7 @@ export class ContactForm extends Component {
           onChange={handleSubmitInputChange}
           id={_numberInputId}
         />
-        <SubmitBtn type={"submit"}>Add contact</SubmitBtn>
+        <SubmitBtn type={'submit'}>Add contact</SubmitBtn>
       </ContactAddForm>
     );
   }

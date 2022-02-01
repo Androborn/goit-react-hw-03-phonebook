@@ -24,10 +24,15 @@ export default class App extends Component {
     }));
   }
 
-  componentDidUpdate(prevState) {
-    const { state } = this;
+  componentDidUpdate(_, prevState) {
+    const { state, filterContacts, claenFilter } = this;
+
     state[DATA_TO_SAVE] !== prevState[DATA_TO_SAVE] &&
       saveToStorage(DATA_TO_SAVE, state[DATA_TO_SAVE]);
+
+    if (prevState.filter && filterContacts().length === 0) {
+      claenFilter();
+    }
   }
 
   handleFilterInputChange = handleInputChange.bind(this);
@@ -52,15 +57,12 @@ export default class App extends Component {
     const filteredContacts = contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter.toLowerCase()),
     );
-
-    if (filteredContacts.length === 0) {
-      this.setState({ filter: '' });
-    }
-
     return filteredContacts;
   };
 
-  claenFilter = () => {};
+  claenFilter = () => {
+    this.setState({ filter: '' });
+  };
 
   deleteContact = id => {
     this.setState(prevState => ({

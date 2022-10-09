@@ -1,16 +1,11 @@
 import { Component } from 'react';
 import { nanoid } from 'nanoid';
-
-import { Section, ContactForm, Filter, ContactList } from './components';
-import {
-  handleInputChange,
-  saveToStorage,
-  loadFromStorage,
-  DATA_TO_LOAD,
-  DATA_TO_SAVE,
-} from './utils';
-
-import { Wrapper, PageHeader } from './App.styled';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ContactForm, Filter, ContactList } from './components';
+import { saveToStorage, loadFromStorage } from './utils';
+import { DATA_TO_LOAD, DATA_TO_SAVE } from './utils/constants';
+import { Wrapper, PageHeader, SectionHeader } from './App.styled';
 
 export default class App extends Component {
   state = {
@@ -25,17 +20,22 @@ export default class App extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    const { state, filterContacts, claenFilter } = this;
+    const { state, filterContacts, cleanFilter } = this;
+    const noFilterMatch = state.filter && filterContacts().length === 0;
 
     state[DATA_TO_SAVE] !== prevState[DATA_TO_SAVE] &&
       saveToStorage(DATA_TO_SAVE, state[DATA_TO_SAVE]);
 
-    if (prevState.filter && filterContacts().length === 0) {
-      claenFilter();
+    if (noFilterMatch) {
+      cleanFilter();
     }
   }
 
-  handleFilterInputChange = handleInputChange.bind(this);
+  handleFilterInputChange = ({ target: { name, value } }) => {
+    this.setState({
+      [name]: value,
+    });
+  };
 
   addContact = (newName, newNumber) => {
     const newContact = {
@@ -46,7 +46,10 @@ export default class App extends Component {
     const { name } = newContact;
 
     this.checkDuplicatedContacts(name)
-      ? alert(`${name} is already in contacts`)
+      ? toast.warn(`${name} is already in contacts`, {
+          position: 'bottom-center',
+          autoClose: 2000,
+        })
       : this.setState(prevState => ({
           contacts: [newContact, ...prevState.contacts],
         }));
@@ -60,8 +63,13 @@ export default class App extends Component {
     return filteredContacts;
   };
 
-  claenFilter = () => {
-    this.setState({ filter: '' });
+  cleanFilter = () => {
+    toast.info("There's no such contact", {
+      toastId: 'filter-toast',
+      position: 'bottom-center',
+      autoClose: 1000,
+    });
+    setTimeout(() => this.setState({ filter: '' }), 2000);
   };
 
   deleteContact = id => {
@@ -76,8 +84,8 @@ export default class App extends Component {
     );
 
   render() {
-    const { filter } = this.state;
     const {
+      state: { filter },
       addContact,
       handleFilterInputChange,
       filterContacts,
@@ -88,15 +96,15 @@ export default class App extends Component {
       <Wrapper>
         <PageHeader>Phonebook</PageHeader>
         <ContactForm onSubmit={addContact} />
-        <Section header="Contacts">
-          <Filter value={filter} onChange={handleFilterInputChange}>
-            Find contacts by name
-          </Filter>
-          <ContactList
-            contacts={filterContacts()}
-            deleteContact={deleteContact}
-          />
-        </Section>
+        <SectionHeader>Contacts</SectionHeader>
+        <Filter value={filter} onChange={handleFilterInputChange}>
+          Find contacts by name
+        </Filter>
+        <ContactList
+          contacts={filterContacts()}
+          deleteContact={deleteContact}
+        />
+        <ToastContainer />
       </Wrapper>
     );
   }

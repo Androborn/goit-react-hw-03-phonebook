@@ -1,8 +1,6 @@
 import { Component } from 'react';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
-
-import { handleInputChange } from '../../utils';
 import {
   ContactAddForm,
   NameLabel,
@@ -18,15 +16,23 @@ export class ContactForm extends Component {
   _nameInputId = nanoid();
   _numberInputId = nanoid();
 
-  handleSubmitInputChange = handleInputChange.bind(this);
+  handleInputChange = ({ target: { name, value } }) => {
+    this.setState({
+      [name]: value,
+    });
+  };
 
   handleSubmit = e => {
     e.preventDefault();
 
-    const { name, number } = this.state;
-    this.props.onSubmit(name, number);
+    const {
+      state: { name, number },
+      props,
+      resetForm,
+    } = this;
 
-    this.resetForm();
+    props.onSubmit(name, number);
+    resetForm();
   };
 
   resetForm = () =>
@@ -36,12 +42,12 @@ export class ContactForm extends Component {
     });
 
   render() {
-    const { name, number } = this.state;
     const {
+      state: { name, number },
       _nameInputId,
       _numberInputId,
       handleSubmit,
-      handleSubmitInputChange,
+      handleInputChange,
     } = this;
 
     return (
@@ -54,7 +60,7 @@ export class ContactForm extends Component {
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
           value={name}
-          onChange={handleSubmitInputChange}
+          onChange={handleInputChange}
           id={_nameInputId}
         />
         <NumberLabel htmlFor={_numberInputId}>Number</NumberLabel>
@@ -65,7 +71,7 @@ export class ContactForm extends Component {
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
           value={number}
-          onChange={handleSubmitInputChange}
+          onChange={handleInputChange}
           id={_numberInputId}
         />
         <SubmitBtn type={'submit'}>Add contact</SubmitBtn>

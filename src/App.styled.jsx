@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -15,9 +15,14 @@ export const PageHeader = styled.h1`
   font-size: 4rem;
 
   &::before {
-    content: "☎️";
+    content: '☎️';
     margin-right: 1rem;
     vertical-align: 0.5rem;
     font-size: 3rem;
   }
+`;
+
+export const SectionHeader = styled.h2`
+  margin-bottom: 0.5rem;
+  font-size: 3rem;
 `;
